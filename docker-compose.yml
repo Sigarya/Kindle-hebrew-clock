@@ -1,0 +1,10 @@
+services:
+  hebclk:
+    build: .
+    ports:
+      - "8765:8765"
+    environment:
+      PORT: 8765
+      DISPLAY_LAG: 8
+      LOG_LEVEL: info
+    restart: unless-stopped
