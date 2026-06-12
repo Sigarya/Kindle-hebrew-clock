@@ -31,7 +31,6 @@ String   imageUrl;
 uint32_t refreshInterval  = 60;
 uint32_t lastRefresh      = 0;
 uint8_t  refreshCount     = 0;
-uint8_t  fullRefreshEvery = 10;
 String   selectedFont     = "NotoSansHebrew-Bold";
 String   location         = "Tel Aviv";
 
@@ -179,10 +178,6 @@ static const char CONFIG_HTML[] PROGMEM = R"(<!DOCTYPE html>
     <label>Refresh interval (seconds, outside sleep window)</label>
     <input type="number" name="interval" value="{{INTERVAL}}" min="1">
 
-    <label>Full refresh every N partial refreshes</label>
-    <input type="number" name="full_every" value="{{FULL_EVERY}}" min="0">
-    <p class="note">0 = always full refresh</p>
-
     <hr>
 
     <div class="row">
@@ -228,7 +223,6 @@ void handleRoot() {
     html.replace("{{SLEEP_START}}",      sleepStart);
     html.replace("{{SLEEP_END}}",        sleepEnd);
     html.replace("{{INTERVAL}}",         String(refreshInterval));
-    html.replace("{{FULL_EVERY}}",       String(fullRefreshEvery));
     html.replace("{{RTC_EN_CHECKED}}",   rtcEnabled ? "checked" : "");
     server.send(200, "text/html; charset=utf-8", html);
 }
@@ -251,8 +245,6 @@ void handleConfig() {
         sleepEnd = server.arg("sleep_end");
     if (server.hasArg("interval") && server.arg("interval").toInt() > 0)
         refreshInterval = (uint32_t)server.arg("interval").toInt();
-    if (server.hasArg("full_every"))
-        fullRefreshEvery = (uint8_t)server.arg("full_every").toInt();
 
     prefs.begin("epaper", false);
     prefs.putString("url",         imageUrl);
@@ -263,7 +255,6 @@ void handleConfig() {
     prefs.putString("sleep_start", sleepStart);
     prefs.putString("sleep_end",   sleepEnd);
     prefs.putUInt("interval",      refreshInterval);
-    prefs.putUChar("full_every",   fullRefreshEvery);
     prefs.putBool("rtc_en",        rtcEnabled);
     prefs.end();
 
@@ -346,12 +337,11 @@ void fetchAndDisplay() {
     png.close();
     if (rc != PNG_SUCCESS) { Serial.printf("PNG decode error: %d\n", rc); return; }
 
-    bool fullRefresh = (fullRefreshEvery == 0) || (refreshCount % fullRefreshEvery == 0);
     display.epd2.writeImage(frameBuf, 0, 0, 800, 480, false, false, false);
-    display.epd2.refresh(!fullRefresh);
+    display.epd2.refresh(true);   // always partial
     display.epd2.powerOff();
     refreshCount++;
-    Serial.printf("Display updated (%s refresh)\n", fullRefresh ? "full" : "partial");
+    Serial.printf("Display updated (partial refresh)\n");
 }
 
 // ── Info screens ─────────────────────────────────────
@@ -435,7 +425,6 @@ void setup() {
     prefs.begin("epaper", true);
     imageUrl         = prefs.getString("url",         "");
     refreshInterval  = prefs.getUInt("interval",      60);
-    fullRefreshEvery = prefs.getUChar("full_every",   10);
     selectedFont     = prefs.getString("font",        "NotoSansHebrew-Bold");
     location         = prefs.getString("location",    "Tel Aviv");
     calendarType     = prefs.getString("calendar",    "gregorian");
