@@ -2,7 +2,7 @@
 
 ![hebrew-clock on a Waveshare 7.5" e-paper display](assets/screenshots/heb-clock.jpeg)
 
-A Hebrew word-clock server that generates 800×480 black-and-white PNG images for e-paper displays. The server expresses the current Israel time in natural written Hebrew, together with an analog clock face, the day/date, and a live weather icon. A companion Arduino sketch drives the image onto a Waveshare 7.5" V2 e-paper panel via a Seeed XIAO ESP32C3.
+A Hebrew word-clock server that generates 800×480 black-and-white PNG images for e-paper displays. The server expresses the current Israel time in natural written Hebrew, together with an analog clock face, the day/date, and a live weather icon. A companion Arduino sketch drives the image onto a [Waveshare 7.5" V2 e-paper panel](https://s.click.aliexpress.com/e/_c4dODAMv) via a Seeed XIAO ESP32C3.
 
 ---
 

@@ -9,7 +9,7 @@ The `sketch/hebclk.ino` sketch runs on a **Seeed XIAO ESP32C3** connected to a *
 | Part | Details |
 |------|---------|
 | MCU | Seeed XIAO ESP32C3 |
-| Display | Waveshare 7.5" V2 e-paper (800×480, B/W) |
+| Display | [Waveshare 7.5" V2 e-paper (800×480, B/W)](https://s.click.aliexpress.com/e/_c4dODAMv) |
 
 ### Wiring
 
