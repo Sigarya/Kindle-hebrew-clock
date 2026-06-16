@@ -57,3 +57,10 @@ def test_tailwind_css_served(client):
     resp = client.get("/static/tailwind.min.css")
     assert resp.status_code == 200
     assert "text/css" in resp.headers.get("content-type", "")
+
+
+def test_home_query_params_preselect_font(client):
+    resp = client.get("/?font=Heebo-Bold&location=Jerusalem&calendar=jewish")
+    assert resp.status_code == 200
+    assert 'value="Heebo-Bold" selected' in resp.text
+    assert 'value="Jerusalem"' in resp.text

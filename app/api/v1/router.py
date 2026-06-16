@@ -20,16 +20,21 @@ _TEMPLATES = Jinja2Templates(
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-async def home(request: Request) -> HTMLResponse:
+async def home(
+    request: Request,
+    font: str = Query(default=clock.DEFAULT_FONT),
+    location: str = Query(default="Tel Aviv"),
+    calendar: str = Query(default="gregorian"),
+) -> HTMLResponse:
     base_url = str(request.base_url).rstrip("/")
     return _TEMPLATES.TemplateResponse(
         request,
         "index.html",
         {
             "fonts": sorted(clock.VALID_FONTS),
-            "default_font": clock.DEFAULT_FONT,
-            "default_location": "Tel Aviv",
-            "default_calendar": "gregorian",
+            "default_font": font,
+            "default_location": location,
+            "default_calendar": calendar,
             "gtag_id": settings.gtag_id,
             "base_url": base_url,
         },
