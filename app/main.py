@@ -31,7 +31,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=settings.forwarded_allow_ips)
 app.include_router(router)
 
 _APP_DIR = Path(__file__).parent  # = app/
