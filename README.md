@@ -213,13 +213,17 @@ To view the Hebrew clock on a jailbroken Kindle, you can use the **[kindle-short
 2. **Extract to Kindle Root:**
    Connect your Kindle to a computer and extract the contents of the ZIP archive directly to the root directory of your Kindle's mounted storage.
 
-3. **Configure the Server URL:**
-   You can direct the Kindle browser to your Hebrew Clock server using one of the following methods:
-   * **Method A (Via HTML index):** Open the file `<YourKindle>\documents\shortcutbrowser\index.html` and modify `https://example.com` to point to your Hebrew clock server (e.g., `http://<your-server-ip>:8765/` or your Render deployment URL).
-   * **Method B (Via Shell Script):** Open `<YourKindle>\documents\shortcut_browser.sh` and set the `FULLSCREEN_SITE` variable to your clock server URL:
-     ```bash
-     FULLSCREEN_SITE="http://<your-server-ip>:8765/"
-     ```
+### 3. Configure the Server URL
+You can direct the Kindle browser to your Hebrew Clock server’s Kindle-specific endpoint using one of the following methods:
+
+* **Method A (Via HTML index):** Open the file `<YourKindle>\documents\shortcutbrowser\index.html` on your device and replace `https://example.com` with your server's path:
+  ```html
+  http://yourserver.com/kindle
+  ```
+* **Method B (Via Shell Script):** Open `<YourKindle>\documents\shortcut_browser.sh` on your device and update the `FULLSCREEN_SITE` variable to point directly to the path:
+  ```bash
+  FULLSCREEN_SITE="http://yourserver.com/kindle"
+  ```
 
 4. **Launch the Interface:**
    Safely eject the Kindle from your computer, open your Kindle's library or KUAL menu, and launch the shortcut browser app to run the clock.
