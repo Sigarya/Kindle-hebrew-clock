@@ -1,16 +1,16 @@
-# hebrew-clock
+# Kindle-hebrew-clock
 
-![hebrew-clock on a Waveshare 7.5" e-paper display](assets/screenshots/heb-clock.jpeg)
+![hebrew-clock on a Kindle e-paper display](assets/screenshots/heb-clock.jpeg)
 
-A Hebrew word-clock server that generates 800×480 black-and-white PNG images for e-paper displays. The server expresses the current Israel time in natural written Hebrew, together with an analog clock face, the day/date, and a live weather icon. A companion Arduino sketch drives the image onto a [Waveshare 7.5" V2 e-paper panel](https://s.click.aliexpress.com/e/_c3SXnojT) via a Seeed XIAO ESP32C3.
+A Hebrew word-clock server that generates 800×480 black-and-white PNG images optimized for e-paper displays. The server expresses the current Israel time in natural written Hebrew, together with an analog clock face, the day/date, and a live weather icon. This fork is designed to run on a jailbroken **Kindle** e-reader using [kindle-shortcut-browser](https://github.com/mitchellurgero/kindle-shortcut-browser) to display the clock interface in full-screen.
 
 ---
 
 ## How It Works
 
-1. The ESP32 fetches a PNG from the server at a configurable interval.
-2. The server renders the current Israel time as written Hebrew words (e.g. *שֶׁבַע וָרֶבַע בָּעֶרֶב* — "quarter past seven in the evening"), draws an analog clock and a weather icon, and returns a 1-bit PNG sized exactly 800×480.
-3. The ESP decodes the PNG in RAM and writes it to the e-paper display using a mix of partial and full refreshes.
+1. The Kindle loads the clock interface from the server using the fullscreen browser.
+2. The server renders the current Israel time as written Hebrew words (e.g. *שֶׁבַע וָרֶבַע בָּעֶרֶב* — "quarter past seven in the evening"), draws an analog clock and a weather icon, and returns a 1-bit PNG.
+3. The Kindle's browser displays the rendered clock full-screen and auto-refreshes the view at a regular interval.
 
 ---
 
@@ -56,7 +56,7 @@ When `calendar=jewish` is passed, the bottom-left cell shows the full Hebrew dat
 
 ### Night / sleep mode
 
-When `sleeptime=1` is sent by the ESP (during the configured sleep window), the server returns a dark star-field image with a Hebrew "time to sleep" message.
+When `sleeptime=1` is sent by the browser (during the configured sleep window), the server returns a dark star-field image with a Hebrew "time to sleep" message.
 
 ![Night sleep mode](assets/screenshots/clock-sleep.png)
 
@@ -130,7 +130,7 @@ services:
 docker compose up -d
 ```
 
-The container expects font `.ttf` files and `sleeping.png` to be present at build time (the `Dockerfile` copies `*.ttf sleeping.png*` from the project root into `/app/`).
+The container expects font `.ttf` files and `sleeping.png` to be present at build time (the `Dockerfile` copies `*.ttf sleeping.png` from the project root into `/app/`).
 
 ### Environment variables
 
@@ -199,25 +199,30 @@ The repo includes a `render.yaml` blueprint. Click the button below, connect you
 5. Set the **Health Check Path** to `/health`.
 6. Click **Create Web Service**. Render will build and deploy; the service URL appears in the dashboard.
 
-### Pointing the ESP32 at Render
-
-Once the service is live, copy its URL from the Render dashboard (e.g. `https://hebrew-clock.onrender.com`) and paste it into the **Image URL** field in the [ePaper config UI](epaper.md).
-
-> **Free-tier note:** Render's free plan spins down a service after 15 minutes of inactivity. Because the ESP32 fetches an image every 60 seconds, the service stays warm continuously during normal use.
-
 ---
 
-## ESP32 Firmware
+## Kindle Setup
 
-See **[epaper.md](epaper.md)** for full instructions on:
-- Adding the ESP32 board to Arduino IDE
-- Installing required libraries
-- First-boot Wi-Fi setup
-- Web configuration UI reference
-- Optional DS3231 RTC module (keeps the sleep schedule alive without NTP)
+To view the Hebrew clock on a jailbroken Kindle, you can use the **[kindle-shortcut-browser](https://github.com/mitchellurgero/kindle-shortcut-browser)** application to render the page full-screen.
 
-![ePaper Configuration UI](assets/screenshots/esp-config-ui.png)
-*Configuration UI — showing Calendar type dropdown (Gregorian / Jewish) and DS3231 RTC option*
+### Setup Instructions
+
+1. **Download the Latest Release:**
+   Obtain the latest ZIP archive from the [kindle-shortcut-browser releases page](https://github.com/mitchellurgero/kindle-shortcut-browser/releases).
+
+2. **Extract to Kindle Root:**
+   Connect your Kindle to a computer and extract the contents of the ZIP archive directly to the root directory of your Kindle's mounted storage.
+
+3. **Configure the Server URL:**
+   You can direct the Kindle browser to your Hebrew Clock server using one of the following methods:
+   * **Method A (Via HTML index):** Open the file `<YourKindle>\documents\shortcutbrowser\index.html` and modify `https://example.com` to point to your Hebrew clock server (e.g., `http://<your-server-ip>:8765/` or your Render deployment URL).
+   * **Method B (Via Shell Script):** Open `<YourKindle>\documents\shortcut_browser.sh` and set the `FULLSCREEN_SITE` variable to your clock server URL:
+     ```bash
+     FULLSCREEN_SITE="http://<your-server-ip>:8765/"
+     ```
+
+4. **Launch the Interface:**
+   Safely eject the Kindle from your computer, open your Kindle's library or KUAL menu, and launch the shortcut browser app to run the clock.
 
 ---
 
@@ -232,8 +237,6 @@ app/
     clock.py           # Image generation (PIL, Hebrew word-clock logic)
     weather.py         # wttr.in weather cache
     jewish_cal.py      # hebcal.com Hebrew date fetch + cache
-sketch/
-  hebclk.ino           # ESP32 Arduino sketch
 assets/screenshots/    # README images
 Dockerfile
 docker-compose.yml
