@@ -1,6 +1,6 @@
 # Kindle-hebrew-clock
 
-![hebrew-clock on a Kindle e-paper display](assets/screenshots/heb-clock.jpeg)
+![hebrew-clock on a Kindle e-paper display](assets/screenshots/heb-clock.jpg)
 
 A Hebrew word-clock server that generates 800×480 black-and-white PNG images optimized for e-paper displays. The server expresses the current Israel time in natural written Hebrew, together with an analog clock face, the day/date, and a live weather icon. This fork is designed to run on a jailbroken **Kindle** e-reader using [kindle-shortcut-browser](https://github.com/mitchellurgero/kindle-shortcut-browser) to display the clock interface in full-screen.
 
